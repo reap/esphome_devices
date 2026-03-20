@@ -45,7 +45,7 @@ jobs:
           ota_password: "test"
           api_key: "test"
           api_encryption_key: "q83v7l8nV1C9Y2lqkJ3m0W6pRrTtU9xZb4n2c5d8e1A="
-          fallback_ap_password: "test"
+          fallback_ap_password: "testtest"
           EOF
 
       - name: Validate config
