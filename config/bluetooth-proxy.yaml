@@ -1,3 +1,4 @@
+---
 esphome:
   name: bluetooth-proxy
   friendly_name: Bluetooth Proxy
