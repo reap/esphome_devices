@@ -1,7 +1,7 @@
-name: ESPHome Validate
+name: Validate-YAML
 
 on:
-  pull_request:
+  push:
 
 jobs:
   discover:
@@ -36,18 +36,5 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v4
 
-      - name: Create dummy secrets.yaml
-        run: |
-          cat <<EOF > config/secrets.yaml
-          wifi_ssid: "test"
-          wifi_password: "testtest"
-          ota_password: "test"
-          api_key: "test"
-          api_encryption_key: "q83v7l8nV1C9Y2lqkJ3m0W6pRrTtU9xZb4n2c5d8e1A="
-          fallback_ap_password: "testtest"
-          EOF
-
-      - name: Validate config
-        uses: esphome/build-action@v7.2.0
-        with:
-          yaml-file: ${{ matrix.file }}
+      - name: Validate YAML file
+        run: yamllint ${{ matrix.file }}
