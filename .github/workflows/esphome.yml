@@ -1,0 +1,54 @@
+name: ESPHome Validate
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  discover:
+    name: Discover YAML files
+    runs-on: ubuntu-latest
+    outputs:
+      files: ${{ steps.set-matrix.outputs.files }}
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Find ESPHome YAMLs
+        id: set-matrix
+        run: |
+          # Find YAML files (exclude common folders if needed)
+          files=$(find . -maxdepth 1 -name "*.yaml" -not -name "secrets.yaml" -printf '%f\n' | jq -R -s -c 'split("\n")[:-1]')
+          echo "Found files: $files"
+          echo "files=$files" >> $GITHUB_OUTPUT
+
+  validate:
+    name: Validate ${{ matrix.file }}
+    needs: discover
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        file: ${{ fromJson(needs.discover.outputs.files) }}
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Create dummy secrets.yaml
+        run: |
+          cat <<EOF > secrets.yaml
+          wifi_ssid: "test"
+          wifi_password: "test"
+          ota_password: "test"
+          api_key: "test"
+          api_encryption_key: "test"
+          fallback_ap_password: "test"
+          EOF
+
+      - name: Validate config
+        uses: esphome/build-action@v3
+        with:
+          yaml_file: ${{ matrix.file }}
