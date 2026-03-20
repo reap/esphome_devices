@@ -1,7 +1,6 @@
 name: ESPHome Validate
 
 on:
-  push:
   pull_request:
 
 jobs:
